@@ -1,0 +1,35 @@
+// member-function.cpp by Bill Weinman <http://bw.org/>
+// updated bw 2018-10-03
+#include <cstdio>
+#include <iostream>
+
+using namespace std;
+
+class A {
+    int _value = 0;
+public:
+    void setv(const int a) { _value = a; };
+    int getv();
+    int getv() const;
+};
+
+int A::getv() { 
+    cout << "mutable getv" << endl;
+    return _value;
+};
+
+int A::getv() const {
+    cout << "const getv" << endl;
+    return _value;
+};
+
+int main() {
+    A a;
+    a.setv(42);
+    printf("a is %d\n", a.getv());
+
+    const A b;
+    printf("b is %d\n", b.getv());
+
+    return 0;
+}
