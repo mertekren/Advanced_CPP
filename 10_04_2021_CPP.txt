@@ -1,0 +1,165 @@
+C struct assignment
+
+eger struct tipleri ayni ise iki struct nesnesi birbirine esitlenebilir.
+struct Test t1;
+struct Test t2;
+t2 = t1;
+
+struct atama islemleri yapilirken asagidaki gibi pointerlarda sorun olusabilir.
+
+struct S {
+   char *p;
+};
+
+struct S s1, s2;
+s1.p = malloc(100);
+s2 = s1;
+
+burdaki p pointer i iki struct icinde ayni seyi gosteriyor olacaktir. bu sebeple 
+islem yapma zamaninda ozellikle pointer'a sahip structlarda daha dikkatli yapilmalidir.
+burda ki en buyuk problem string olarak kullanilan pointer lardir. iki struct birbirine assign 
+edildiginde string olarak kullanilan pointer icerigi degil adresler birbirine kopyalanir.
+Asagidaki kod buna ornektir
+
+#include <stdio.h>
+
+struct Test {
+    int foo;
+    char *bar;
+};
+
+int main() {
+
+    struct Test t1;
+    struct Test t2;
+    
+    t1.foo = 1;
+    t1.bar = malloc(100 * sizeof(char));
+    strcpy(t1.bar, "t1 bar value");
+    
+    t2.foo = 2;
+    t2.bar = malloc(100 * sizeof(char));
+    strcpy(t2.bar, "t2 bar value");
+    
+    printf("t2 foo and bar before copy: %d %s\n", t2.foo, t2.bar);
+    t2 = t1;
+    printf("t2 foo and bar after copy: %d %s\n", t2.foo, t2.bar);
+
+    strcpy(t1.bar, "t1 bar value changed");
+    strcpy(t2.bar, "t2 bar value changed");
+    t1.foo = 3;
+    
+    printf("t1 foo and bar after t1 is altered: %d %s\n", t1.foo, t1.bar);
+    printf("t2 foo and bar after t1 is altered: %d %s\n", t2.foo, t2.bar);
+    return 0;
+}
+
+Ciktisi asagidaki gibi olacaktir.
+
+t2 foo and bar before copy: 2 t2 bar value
+t2 foo and bar after copy: 1 t1 bar value
+t1 foo and bar after t1 is altered: 3 t2 bar value changed
+t2 foo and bar after t1 is altered: 1 t2 bar value changed
+**************************************************************************************
+CPP reference
+
+Aslinda kullanim sekli pointer lara benzemekte.
+
+Asagidaki kodda anlasilmasi daha kolaylasmaktadir.
+
+#include<iostream>
+using namespace std;
+ 
+void swap (int& first, int& second) {
+
+    int temp = first;
+    first = second;
+    second = temp;
+}
+ 
+int main() {
+
+    int a = 2, b = 3;
+    swap( a, b );
+    cout << a << " " << b;
+    return 0;
+}
+
+Ciktilari
+
+3 2
+
+Asagidaki kod blogunda ise yeni bir for kullanimi ile incelenebilr
+
+#include <bits/stdc++.h>
+using namespace std;
+ 
+int main() {
+
+    vector<int> vect{ 10, 20, 30, 40 };
+ 
+    // We can modify elements if we
+    // use reference
+    for (int &x : vect)
+        x = x + 5;
+ 
+    // Printing elements
+    for (int x : vect)
+       cout << x << " ";
+ 
+    return 0;
+}
+
+Ciktilari 
+
+15 25 35 45
+
+Alttaki kodda alistirmalara devam edilebilir
+
+#include<iostream>
+using namespace std;
+ 
+int &fun() {
+    
+    static int x = 10;
+    return x;
+}
+
+int main() {
+    
+    fun() = 30;
+    cout << fun();
+    return 0;
+}
+
+ciktisi
+
+30
+
+Biraz daha karmasiklastirmak gerekirse :)
+
+#include<iostream>
+using namespace std;
+ 
+void swap(char * &str1, char * &str2) {
+    
+  char *temp = str1;
+  str1 = str2;
+  str2 = temp;
+}
+ 
+int main() {
+    
+  char *str1 = "SALIH";
+  char *str2 = "TOPAL";
+  swap(str1, str2);
+  cout<<"str1 is "<<str1<<endl;
+  cout<<"str2 is "<<str2<<endl;
+  return 0;
+}
+
+Ciktisi
+
+str1 is TOPAL                                                                                                                                                                      
+str2 is SALIH
+
